@@ -1,0 +1,31 @@
+#!/usr/bin/env node
+const fs = require("fs")
+
+function printKeys(obj, path) {
+  for (const k in obj) {
+    const thisPath = [...path, k]
+    if (typeof obj[k] === 'object') {
+      printKeys(obj[k], thisPath)
+    } else {
+      console.log(pathToString(thisPath))
+    }
+  }
+}
+
+function pathToString(path) {
+  return path.reduce((acc, item) => {
+    if (Number.isSafeInteger(Number(item))) {
+      return acc + '[' + item + ']'
+    } else {
+      return acc + '.' + item; 
+    }
+  }, '')
+}
+
+if (process.argv.length === 3) {
+  const data = JSON.parse(fs.readFileSync(process.argv[2]))
+  printKeys(data, [])
+} else {
+  const cmd = process.argv[1]
+  console.log(["usage: ", cmd, " <filename> "].join(''))
+}
